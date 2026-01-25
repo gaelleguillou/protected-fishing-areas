@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.4
+    container_name: pfa_postgis
+    environment:
+      POSTGRES_USER: pfa
+      POSTGRES_PASSWORD: pfa
+      POSTGRES_DB: pfa
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+
+volumes:
+  postgis_data:
