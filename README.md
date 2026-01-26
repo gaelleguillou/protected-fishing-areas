@@ -1,7 +1,16 @@
 # Protected Fishing Areas
-Analyse de la pression de pêche industrielle sur les zones marines protégées.
 
-Pour ça, on croise les données d'heures
+Analyse de la pression de pêche industrielle sur les zones marines protégées. Pour ça, on cherche à croiser les données de pression de la pêche (de Global Fishing Watch) avec les données de zones marines protégées.
+
+Projet en cours, en voici l'évolution :
+- [x] Initialiser le projet avec des bonnes pratiques de CI/CD (pre-commit hooks)
+- [x] Configurer un container Docker pour faire tourner Airflow et PostGIS
+- [x] Configurer le projet DBT avec les bonnes pratiques (modèles staging, intermediate et analytics)
+- [x] Créer les schémas DBT et la table `fct_fishing_effort.sql` qui transforme les lon/lat en Polygones géométriques (anticipant les besoins analytiques)
+- [x] Créer un DAG dans Airflow qui : vérifie le téléchargement des données dans data/raw > load les données GFW dans Postgres (PostGIS) > lance les transformations DBT
+- [ ] Intégrer les données géographiques des ZMP (Zones Marines Protégées) selon une logique similaire
+- [ ] Développer des tests dbt pour vérifier la correcte intégration des données et leur cohérence (type vérifier les formats longitude / latitude, etc)
+- [ ] Créer une page interactive de cartographie et analyse des pressions de la pêche sur les ZMP
 
 ## Data
 
@@ -38,9 +47,9 @@ TODO
 
 J'utilise pre-commit sur le repo pour maintenir la lisibilité du code.
 
-## Version manager
+## Versioning
 
-J'utilise UV pour manager mon environnement local ET l'environnement Airflow.
+J'utilise UV pour manager mon environnement local et des requirements pour initialiser airflow (après des difficultés à intégrer uv dans airflow).
 
 ## Archive : comment installer GDAL & autres dépendances sur un container docker ?
 

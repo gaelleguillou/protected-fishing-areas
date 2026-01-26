@@ -4,9 +4,8 @@ with staging as (
 
 select
     *,
-    -- On crée le polygone dynamiquement en SQL
     ST_MakeEnvelope(
-        lon - (0.1 / 2), -- Remplace 0.1 par ta variable CELL_SIZE_DEG
+        lon - (0.1 / 2),
         lat - (0.1 / 2),
         lon + (0.1 / 2),
         lat + (0.1 / 2),
