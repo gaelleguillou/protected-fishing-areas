@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # BDD pour Airflow
   postgres:
     image: postgres:13
     environment:
@@ -11,7 +12,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # BDD pour les données géospatiales
   postgres-data:
     image: postgis/postgis:15-3.4
     environment:
@@ -22,6 +29,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data_pfa:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
   airflow:
     build:
@@ -41,7 +49,8 @@ services:
     volumes:
       - ./dags:/opt/airflow/dags
       - ./data:/opt/airflow/data
-      - ./requirements.txt:/requirements.txt
+      - ./dbt:/opt/airflow/dbt
+      - ./ton_chemin_local/profiles.yml:/home/airflow/.dbt/profiles.yml
     depends_on:
       - postgres
       - postgres-data

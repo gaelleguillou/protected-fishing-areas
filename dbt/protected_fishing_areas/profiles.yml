@@ -1,0 +1,12 @@
+protected_fishing_areas:
+  outputs:
+    dev:
+      type: postgres
+      host: postgres-data
+      user: pfa
+      password: pfa
+      port: 5432
+      dbname: pfa
+      schema: analytics
+      threads: 4
+  target: dev

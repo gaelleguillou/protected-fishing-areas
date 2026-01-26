@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from sqlalchemy import create_engine
 from airflow import DAG
+from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
 from config import Config
@@ -62,6 +63,7 @@ def load_raw_to_postgis(**kwargs):
             chunk_df.to_sql(
                 name="stg_gfw_fishing",
                 con=engine,
+                schema="raw",
                 if_exists=if_exists,
                 index=False,
                 chunksize=10_000,
@@ -89,4 +91,9 @@ with DAG(
         python_callable=load_raw_to_postgis,
     )
 
-    task_download >> task_load
+    run_dbt = BashOperator(
+        task_id="run_dbt_transformations",
+        bash_command="cd /opt/airflow/dbt/protected_fishing_areas && dbt run --profiles-dir .",  # noqa E501
+    )
+
+    task_download >> task_load >> run_dbt
