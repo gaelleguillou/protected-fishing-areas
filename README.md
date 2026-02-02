@@ -12,6 +12,12 @@ Projet en cours, en voici l'évolution :
 - [ ] Développer des tests dbt pour vérifier la correcte intégration des données et leur cohérence (type vérifier les formats longitude / latitude, etc)
 - [ ] Créer une page interactive de cartographie et analyse des pressions de la pêche sur les ZMP
 
+## Docker
+
+Ce projet utilise docker pour contenairiser l'ingestion (airflow), les transformations (dbt) et la visualisation (API, backend et frontend).
+
+Pour lancer docker : `docker-compose up`
+
 ## Data
 
 ### Pression de la pêche
