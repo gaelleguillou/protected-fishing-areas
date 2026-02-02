@@ -8,7 +8,7 @@ Projet en cours, en voici l'évolution :
 - [x] Configurer le projet DBT avec les bonnes pratiques (modèles staging, intermediate et analytics)
 - [x] Créer les schémas DBT et la table `fct_fishing_effort.sql` qui transforme les lon/lat en Polygones géométriques (anticipant les besoins analytiques)
 - [x] Créer un DAG dans Airflow qui : vérifie le téléchargement des données dans data/raw > load les données GFW dans Postgres (PostGIS) > lance les transformations DBT
-- [ ] Intégrer les données géographiques des ZMP (Zones Marines Protégées) selon une logique similaire
+- [x] Intégrer les données géographiques des ZMP (Zones Marines Protégées) selon une logique similaire
 - [ ] Développer des tests dbt pour vérifier la correcte intégration des données et leur cohérence (type vérifier les formats longitude / latitude, etc)
 - [ ] Créer une page interactive de cartographie et analyse des pressions de la pêche sur les ZMP
 
@@ -32,6 +32,12 @@ Schéma :
 - fishing_hours: Hours that MMSI of this geartype and flag were broadcasting on AIS in this grid cell on this day and detected as fishing by the GFW fishing detection model
 - mmsi_present: Number of MMSI of this flag state and geartype that broadcasted on AIS while present in the grid cell on this day
 
+### Zones maritimes protégées mondiales
+
+UNEP-WCMC and IUCN (2026), Protected Planet: The World Database on Protected Areas (WDPA) and World Database on Other Effective Area-based Conservation Measures (WD-OECM) [Online], January 2026, Cambridge, UK: UNEP-WCMC and IUCN. Available at: www.protectedplanet.net.
+
+A télécharger depuis : https://www.protectedplanet.net/en/thematic-areas/marine-protected-areas et mettre dans le dossier data/raw/ (modifier le chemin dans Config.py) (le fichier csv pour les metadonnées, .shp pour les polygones)
+
 ## Difficultés rencontrées
 
 Initialement, j'ai cherché à faire les transformations basiques dans les DAGs, mais j'ai rencontré plusieurs difficultés techniques.
@@ -46,108 +52,3 @@ TODO
 ## CI/CD
 
 J'utilise pre-commit sur le repo pour maintenir la lisibilité du code.
-
-## Versioning
-
-J'utilise UV pour manager mon environnement local et des requirements pour initialiser airflow (après des difficultés à intégrer uv dans airflow).
-
-## Archive : comment installer GDAL & autres dépendances sur un container docker ?
-
-J'ai supprimé les imports spécifiques puisque je n'en avais plus besoin, mais voilà une trace du setup qui fonctionnait (au 26-01-26) :
-
-```Dockerfile
-
-FROM apache/airflow:2.8.1-python3.11
-
-USER root
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    libgdal-dev \
-    libspatialindex-dev \
-    gdal-bin \
-    build-essential \
-    gcc \
-    g++ && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-USER airflow
-
-COPY requirements.txt /requirements.txt
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /requirements.txt
-
-```
-
-```docker-compose.yml
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  postgres-data:
-    image: postgis/postgis:15-3.4
-    environment:
-      POSTGRES_USER: pfa
-      POSTGRES_PASSWORD: pfa
-      POSTGRES_DB: pfa
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data_pfa:/var/lib/postgresql/data
-
-  airflow:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
-      _AIRFLOW_DB_MIGRATE: "true"
-      _AIRFLOW_WWW_USER_CREATE: "true"
-      _AIRFLOW_WWW_USER_USERNAME: admin
-      _AIRFLOW_WWW_USER_PASSWORD: admin
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./data:/opt/airflow/data
-      - ./requirements.txt:/requirements.txt
-    depends_on:
-      - postgres
-      - postgres-data
-    command: >
-      bash -c "
-        airflow db migrate &&
-        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
-        airflow webserver & airflow scheduler
-      "
-
-volumes:
-  postgres_data:
-  postgres_data_pfa:
-
-```
-
-```requirements.txt
-fiona==1.9.5
-geopandas==0.14.1
-shapely==2.0.3
-pyproj==3.6.1
-psycopg2-binary==2.9.9
-pandas==2.2.1
-pyarrow>=15.0.0
-geoalchemy2>=0.14.0
-sqlalchemy>=1.4,<2.0
-```

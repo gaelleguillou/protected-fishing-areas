@@ -17,16 +17,13 @@ class Config:
         POSTGRES_PORT = 5433
 
     # Chemins
-    RAW_DATA_FOLDER = os.path.join(
-        BASE_PATH, "data/raw/fleet-monthly-csvs-10-v3-2024"
-    )  # noqa E501
-    PROCESSED_DATA_PATH = os.path.join(
-        BASE_PATH, "data/processed/gfw_fleet_2024.parquet"
-    )
+    GFW_RAW_DATA_FOLDER = os.path.join(BASE_PATH, "data/raw/gfw")  # noqa E501
+    WDPA_RAW_DATA_FOLDER = os.path.join(BASE_PATH, "data/raw/wdpa")  # noqa E501
 
     # Database
     POSTGRES_CONN = f"postgresql://pfa:pfa@{POSTGRES_HOST}:{POSTGRES_PORT}/pfa"
-    TABLE_NAME = "fishing_effort_raw"
+    GFW_TABLE_NAME = "fishing_effort_raw"
+    WDPA_TABLE_NAME = "protected_areas_raw"
 
     # Geo
     SRID = 4326

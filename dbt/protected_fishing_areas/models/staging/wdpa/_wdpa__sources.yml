@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: raw_data
+    schema: raw
+    tables:
+      - name: stg_wdpa_metadata
+      - name: stg_wdpa_polygons

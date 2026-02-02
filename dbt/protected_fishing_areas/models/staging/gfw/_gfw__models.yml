@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: stg_gfw__fishing
+    description: ""
+    columns:
+      - name: fishing_date
+        data_type: date
+        description: ""
+
+      - name: fishing_year
+        data_type: integer
+        description: ""
+
+      - name: geartype
+        data_type: text
+        description: ""
+
+      - name: flag
+        data_type: text
+        description: ""
+
+      - name: fishing_hours
+        data_type: double precision
+        description: ""
+
+      - name: lat
+        data_type: double precision
+        description: ""
+
+      - name: lon
+        data_type: double precision
+        description: ""

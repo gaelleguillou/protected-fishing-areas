@@ -10,5 +10,5 @@ select
         lon + (0.1 / 2),
         lat + (0.1 / 2),
         4326
-    )::geometry(Polygon, 4326) as geometry
+    )::geometry(Polygon, 4326) as geom
 from staging

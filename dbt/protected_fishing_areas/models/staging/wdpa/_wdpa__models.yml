@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: stg_wdpa__metadata
+    description: ""
+    columns: []
+  - name: stg_wdpa__polygons
+    description: ""
+    columns: []

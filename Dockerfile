@@ -1,10 +1,19 @@
-FROM apache/airflow:2.7.1-python3.11
+FROM apache/airflow:2.8.1-python3.11
 
 USER root
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git && \
+    apt-get install -y --no-install-recommends \
+    libgdal-dev \
+    libspatialindex-dev \
+    gdal-bin \
+    build-essential \
+    gcc \
+    g++ && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y git
+RUN chown -R airflow: /opt/airflow
 
 USER airflow
 
