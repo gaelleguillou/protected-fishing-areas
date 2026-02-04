@@ -1,5 +1,9 @@
 # Protected Fishing Areas
 
+Ceci est un projet test/portfolio qui vise à intégrer des données GEO lourdes en utilisant Docker, Airflow, DBT, Postgres et PostGIS pour finalement lire ces données sur Streamlit, ou par FastAPI et React. Je me suis concentrée sur la lecture des données (ETL et dbt), le bon fonctionnement de Docker et des containers (qui causaient leurs propres problèmes avec Docker).
+
+Par manque de temps, je n'ai pas touché aux tests (pourtant essentiels) de dbt, ni ai cherché à développer l'analyse de mes données. Ce test était plutôt un challenge en termes d'intégration de larges volumes de données géospatiales.
+
 Analyse de la pression de pêche industrielle sur les zones marines protégées. Pour ça, on cherche à croiser les données de pression de la pêche (de Global Fishing Watch) avec les données de zones marines protégées.
 
 Projet en cours, en voici l'évolution :
@@ -10,7 +14,10 @@ Projet en cours, en voici l'évolution :
 - [x] Créer un DAG dans Airflow qui : vérifie le téléchargement des données dans data/raw > load les données GFW dans Postgres (PostGIS) > lance les transformations DBT
 - [x] Intégrer les données géographiques des ZMP (Zones Marines Protégées) selon une logique similaire
 - [ ] Développer des tests dbt pour vérifier la correcte intégration des données et leur cohérence (type vérifier les formats longitude / latitude, etc)
-- [ ] Créer une page interactive de cartographie et analyse des pressions de la pêche sur les ZMP
+- [x] Créer la base pour une app en React.JS (frontend JSX, backend fastAPI)
+- [x] Créer la base pour une app Streamlit (plus simple, en Python)
+
+Tout run ! Mais les applications sont à peine développées (une simple carte s'affiche en React, et Streamlit nous laisse apercevoir une BDD à partir de l'intersection des bases de données).
 
 ## Docker
 

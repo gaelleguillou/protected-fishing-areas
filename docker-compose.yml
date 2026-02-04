@@ -21,6 +21,7 @@ services:
   # BDD pour les données géospatiales
   postgres-data:
     image: postgis/postgis:15-3.4
+    platform: linux/amd64
     environment:
       POSTGRES_USER: pfa
       POSTGRES_PASSWORD: pfa
@@ -30,6 +31,12 @@ services:
     volumes:
       - postgres_data_pfa:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U pfa -d pfa"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+          start_period: 10s
 
   airflow:
     build:
@@ -60,6 +67,38 @@ services:
         airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
         airflow webserver & airflow scheduler
       "
+
+  backend:
+      build: ./backend
+      ports:
+        - "8000:8000"
+      environment:
+        - DATABASE_URL=postgresql://pfa:pfa@postgres-data:5432/pfa
+      depends_on:
+        postgres-data:
+          condition: service_healthy
+
+  frontend:
+      build: ./frontend
+      ports:
+        - "5173:5173"
+      volumes:
+        - ./frontend:/app
+        - /app/node_modules
+      environment:
+        - CHOKIDAR_USEPOLLING=true
+      depends_on:
+        - backend
+
+  streamlit:
+      build: ./streamlit_app
+      ports:
+        - "8501:8501"
+      volumes:
+        - ./streamlit_app:/app
+      depends_on:
+        postgres-data:
+          condition: service_healthy
 
 volumes:
   postgres_data:

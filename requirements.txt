@@ -1,3 +1,11 @@
+# --- Serveur API & Validation ---
+fastapi==0.110.0
+uvicorn==0.27.1
+pydantic==2.6.3
+python-multipart==0.0.9
+databases[postgresql]==0.8.0
+
+# --- Analyse Spatiale & Data ---
 fiona==1.9.5
 geopandas==0.14.1
 shapely==2.0.3
@@ -7,6 +15,13 @@ pandas==2.2.1
 pyarrow>=15.0.0
 geoalchemy2>=0.14.0
 sqlalchemy>=1.4,<2.0
+
+# --- Orchestration & Transformation ---
 apache-airflow>=2.7.1
 apache-airflow-providers-postgres>=5.0.0
-dbt-postgres
+dbt-postgres==1.7.4
+
+# --- Compatibilité Google / Protobuf ---
+protobuf>=3.19.0
+google-api-core<2.15.0
+google-auth<3.0.0
